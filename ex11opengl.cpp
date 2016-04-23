@@ -15,7 +15,7 @@
 using namespace std;
 
 const int mainView = 0;
-const int firstView = 0;
+const int firstView = 1;
 const int secondView = 1;
 
 //
@@ -382,8 +382,8 @@ void Ex11opengl::paintGL()
 	shader[mode].bind();
 
 	//  Set shader increments
-    shader[mode].setUniformValue("dX",dX*2);
-    shader[mode].setUniformValue("dY",dY*2);
+    shader[mode].setUniformValue("dX",dX);
+    shader[mode].setUniformValue("dY",dY);
 
 	//try to show the two new buffer
 	//  Get the texture
@@ -448,19 +448,18 @@ void Ex11opengl::paintGL()
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+    shader[2].bind();
     //  Texture for this month
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D,framebuf[2]->texture());
     //  Texture for next month
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D,framebuf[3]->texture());
-	shader[mode].bind();
-
 	//  Set shader increments
-    shader[mode].setUniformValue("dX",dX);
-    shader[mode].setUniformValue("dY",dY);
-    shader.setUniformValue("Tex0" ,0);
-    shader.setUniformValue("Tex1" ,1);
+    shader[2].setUniformValue("dX",dX);
+    shader[2].setUniformValue("dY",dY);
+    shader[2].setUniformValue("Tex0" ,0);
+    shader[2].setUniformValue("Tex1" ,1);
 
 	//try to show the two new buffer
 //	//  Get the texture
@@ -472,7 +471,7 @@ void Ex11opengl::paintGL()
 	glTexCoord2f(1,1); glVertex2f(1,0);
 	glTexCoord2f(0,1); glVertex2f(0,0);
 	glEnd();
-	shader[mode].release();
+    shader[2].release();
    }
 
 
