@@ -322,107 +322,134 @@ void Ex11opengl::paintGL()
 
    
    //doing two more pass
-   if (mode) framebuf[0]->bind();
+   if (mode) 
    {
-   //  Z-buffer
-   glEnable(GL_DEPTH_TEST);
-   //  Clear screen and depth buffer
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   //  Draw light position (no lighting yet)
-   glColor3f(1,1,1);
-   ball(Position[0],Position[1],Position[2] , 0.1);
-   //  OpenGL should normalize normal vectors
-   glEnable(GL_NORMALIZE);
-   //  Enable lighting
-   glEnable(GL_LIGHTING);
-   //  Enable light 0
-   glEnable(GL_LIGHT0);
-   //  Set ambient, diffuse, specular components and position of light 0
-   glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
-   glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
-   glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
-   glLightfv(GL_LIGHT0,GL_POSITION,Position);
+	//  Set projection
+	Projection();
+	//  Set view
+	glLoadIdentity();
+	if (fov) glTranslated(0,0,-2*dim);
+	glRotated(ph,1,0,0);
+	glRotated(th,0,1,0);
+	framebuf[0]->bind();
+	//  Z-buffer
+	glEnable(GL_DEPTH_TEST);
+	//  Clear screen and depth buffer
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//  Draw light position (no lighting yet)
+	glColor3f(1,1,1);
+	ball(Position[0],Position[1],Position[2] , 0.1);
+	//  OpenGL should normalize normal vectors
+	glEnable(GL_NORMALIZE);
+	//  Enable lighting
+	glEnable(GL_LIGHTING);
+	//  Enable light 0
+	glEnable(GL_LIGHT0);
+	//  Set ambient, diffuse, specular components and position of light 0
+	glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
+	glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
+	glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
+	glLightfv(GL_LIGHT0,GL_POSITION,Position);
 
-   //  Draw scene
-   glPushMatrix();
-   for (int k=0;k<objects.size();k++)
-      objects[k]->display();
-   glPopMatrix();
+	//  Draw scene
+	glPushMatrix();
+	for (int k=0;k<objects.size();k++)
+	objects[k]->display();
+	glPopMatrix();
 
-   //  Disable lighting and depth
-   glDisable(GL_LIGHTING);
-   glDisable(GL_DEPTH_TEST);
+	//  Disable lighting and depth
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
 
+	framebuf[0]->release();
 
-   shader[mode].bind();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	shader[mode].bind();
 
-   //  Set shader increments
-   shader[mode].setUniformValue("dX",dX);
-   shader[mode].setUniformValue("dY",dY);
+	//  Set shader increments
+	shader[mode].setUniformValue("dX",dX);
+	shader[mode].setUniformValue("dY",dY);
 
-    //try to show the two new buffer
-    //  Get the texture
-    glBindTexture(GL_TEXTURE_2D,framebuf[0]->texture());
-    //  Exercise shader
-    glBegin(GL_QUADS);
-    glTexCoord2f(0,0); glVertex2f(-1,-1);
-    glTexCoord2f(1,0); glVertex2f(0,-1);
-    glTexCoord2f(1,1); glVertex2f(0,0);
-    glTexCoord2f(0,1); glVertex2f(-1,0);
-    glEnd();
-    shader[mode].release();
+	//try to show the two new buffer
+	//  Get the texture
+	glBindTexture(GL_TEXTURE_2D,framebuf[0]->texture());
+	//  Exercise shader
+	glBegin(GL_QUADS);
+	glTexCoord2f(0,0); glVertex2f(-1,-1);
+	glTexCoord2f(1,0); glVertex2f(0,-1);
+	glTexCoord2f(1,1); glVertex2f(0,0);
+	glTexCoord2f(0,1); glVertex2f(-1,0);
+	glEnd();
+	shader[mode].release();
    }
-//   //one more
-//   if (mode) framebuf[0]->bind();
-//   {
-//   //  Z-buffer
-//   glEnable(GL_DEPTH_TEST);
-//   //  Clear screen and depth buffer
-//   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//   //  Draw light position (no lighting yet)
-//   glColor3f(1,1,1);
-//   ball(Position[0],Position[1],Position[2] , 0.1);
-//   //  OpenGL should normalize normal vectors
-//   glEnable(GL_NORMALIZE);
-//   //  Enable lighting
-//   glEnable(GL_LIGHTING);
-//   //  Enable light 0
-//   glEnable(GL_LIGHT0);
-//   //  Set ambient, diffuse, specular components and position of light 0
-//   glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
-//   glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
-//   glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
-//   glLightfv(GL_LIGHT0,GL_POSITION,Position);
+   //one more
+   if (mode) 
+   {
+	//  Set projection
+	Projection();
+	//  Set view
+	glLoadIdentity();
+	if (fov) glTranslated(0,0,-2*dim);
+	glRotated(-ph,1,0,0);
+	glRotated(th,0,1,0);
+	framebuf[0]->bind();
+	//  Z-buffer
+	glEnable(GL_DEPTH_TEST);
+	//  Clear screen and depth buffer
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//  Draw light position (no lighting yet)
+	glColor3f(1,1,1);
+	ball(Position[0],Position[1],Position[2] , 0.1);
+	//  OpenGL should normalize normal vectors
+	glEnable(GL_NORMALIZE);
+	//  Enable lighting
+	glEnable(GL_LIGHTING);
+	//  Enable light 0
+	glEnable(GL_LIGHT0);
+	//  Set ambient, diffuse, specular components and position of light 0
+	glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
+	glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
+	glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
+	glLightfv(GL_LIGHT0,GL_POSITION,Position);
 
-//   //  Draw scene
-//   glPushMatrix();
-//   for (int k=0;k<objects.size();k++)
-//      objects[k]->display();
-//   glPopMatrix();
+	//  Draw scene
+	glPushMatrix();
+	for (int k=0;k<objects.size();k++)
+	objects[k]->display();
+	glPopMatrix();
 
-//   //  Disable lighting and depth
-//   glDisable(GL_LIGHTING);
-//   glDisable(GL_DEPTH_TEST);
+	//  Disable lighting and depth
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
 
+	framebuf[0]->release();
 
-//   shader[mode].bind();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	shader[mode].bind();
 
-//   //  Set shader increments
-//   shader[mode].setUniformValue("dX",dX);
-//   shader[mode].setUniformValue("dY",dY);
+	//  Set shader increments
+	shader[mode].setUniformValue("dX",dX);
+	shader[mode].setUniformValue("dY",dY);
 
-//    //try to show the two new buffer
-//    //  Get the texture
-//    glBindTexture(GL_TEXTURE_2D,framebuf[0]->texture());
-//    //  Exercise shader
-//    glBegin(GL_QUADS);
-//    glTexCoord2f(0,0); glVertex2f(0,0);
-//    glTexCoord2f(1,0); glVertex2f(1,0);
-//    glTexCoord2f(1,1); glVertex2f(1,1);
-//    glTexCoord2f(0,1); glVertex2f(0,1);
-//    glEnd();
-//    shader[mode].release();
-//   }
+	//try to show the two new buffer
+	//  Get the texture
+	glBindTexture(GL_TEXTURE_2D,framebuf[0]->texture());
+	//  Exercise shader
+	glBegin(GL_QUADS);
+	glTexCoord2f(0,0); glVertex2f(0,-1);
+	glTexCoord2f(1,0); glVertex2f(1,-1);
+	glTexCoord2f(1,1); glVertex2f(1,0);
+	glTexCoord2f(0,1); glVertex2f(0,0);
+	glEnd();
+	shader[mode].release();
+   }
+
 
 
 
