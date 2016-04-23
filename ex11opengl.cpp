@@ -13,6 +13,11 @@
 #define Cos(th) cos(M_PI/180*(th))
 #define Sin(th) sin(M_PI/180*(th))
 using namespace std;
+
+const int mainView = 0;
+const int firstView = 0;
+const int secondView = 1;
+
 //
 //  Draw vertex in polar coordinates
 //
@@ -195,7 +200,7 @@ void Ex11opengl::initializeGL()
    }
 
    //  Start 100 fps timer connected to updateGL
-   move = true;
+   move = false;
    timer.setInterval(10);
    connect(&timer,SIGNAL(timeout()),this,SLOT(updateGL()));
    timer.start();
@@ -249,80 +254,82 @@ void Ex11opengl::paintGL()
    //  Send output to framebuf[0]
    if (mode) framebuf[0]->bind();
 
-   //  Z-buffer
-   glEnable(GL_DEPTH_TEST);
-   //  Clear screen and depth buffer
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   //  Draw light position (no lighting yet)
-   glColor3f(1,1,1);
-   ball(Position[0],Position[1],Position[2] , 0.1);
-   //  OpenGL should normalize normal vectors
-   glEnable(GL_NORMALIZE);
-   //  Enable lighting
-   glEnable(GL_LIGHTING);
-   //  Enable light 0
-   glEnable(GL_LIGHT0);
-   //  Set ambient, diffuse, specular components and position of light 0
-   glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
-   glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
-   glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
-   glLightfv(GL_LIGHT0,GL_POSITION,Position);
+   if(mainView){
+       //  Z-buffer
+       glEnable(GL_DEPTH_TEST);
+       //  Clear screen and depth buffer
+       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+       //  Draw light position (no lighting yet)
+       glColor3f(1,1,1);
+       ball(Position[0],Position[1],Position[2] , 0.1);
+       //  OpenGL should normalize normal vectors
+       glEnable(GL_NORMALIZE);
+       //  Enable lighting
+       glEnable(GL_LIGHTING);
+       //  Enable light 0
+       glEnable(GL_LIGHT0);
+       //  Set ambient, diffuse, specular components and position of light 0
+       glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
+       glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
+       glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
+       glLightfv(GL_LIGHT0,GL_POSITION,Position);
 
-   //  Draw scene
-   glPushMatrix();
-   for (int k=0;k<objects.size();k++)
-      objects[k]->display();
-   glPopMatrix();
+       //  Draw scene
+       glPushMatrix();
+       for (int k=0;k<objects.size();k++)
+          objects[k]->display();
+       glPopMatrix();
 
-   //  Disable lighting and depth
-   glDisable(GL_LIGHTING);
-   glDisable(GL_DEPTH_TEST);
+       //  Disable lighting and depth
+       glDisable(GL_LIGHTING);
+       glDisable(GL_DEPTH_TEST);
 
-   //  Apply shader
-   if (mode)
-   {
-      //  Reset projections
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
+       //  Apply shader
+       if (mode)
+       {
+          //  Reset projections
+          glMatrixMode(GL_PROJECTION);
+          glLoadIdentity();
+          glMatrixMode(GL_MODELVIEW);
+          glLoadIdentity();
 
-      //  Enable shader
-      shader[mode].bind();
+          //  Enable shader
+          shader[mode].bind();
 
-      //  Set shader increments
-      shader[mode].setUniformValue("dX",dX);
-      shader[mode].setUniformValue("dY",dY);
+          //  Set shader increments
+          shader[mode].setUniformValue("dX",dX);
+          shader[mode].setUniformValue("dY",dY);
 
-      //  Ping-Pong
-      for (int k=0;k<N;k++)
-      {
-         int last = k%2;
-         int next = 1-last;
-         //  Set output to next framebuffer except for the last pass
-         if (k+1<N)
-            framebuf[next]->bind();
-         else
-            framebuf[last]->release();
-         //  Get the texture
-         glBindTexture(GL_TEXTURE_2D,framebuf[last]->texture());
-         //  Exercise shader
-         glClear(GL_COLOR_BUFFER_BIT);
-         glBegin(GL_QUADS);
-         glTexCoord2f(0,0); glVertex2f(-1,-1);
-         glTexCoord2f(1,0); glVertex2f(+1,-1);
-         glTexCoord2f(1,1); glVertex2f(+1,+1);
-         glTexCoord2f(0,1); glVertex2f(-1,+1);
-         glEnd();
-      }
+          //  Ping-Pong
+          for (int k=0;k<N;k++)
+          {
+             int last = k%2;
+             int next = 1-last;
+             //  Set output to next framebuffer except for the last pass
+             if (k+1<N)
+                framebuf[next]->bind();
+             else
+                framebuf[last]->release();
+             //  Get the texture
+             glBindTexture(GL_TEXTURE_2D,framebuf[last]->texture());
+             //  Exercise shader
+             glClear(GL_COLOR_BUFFER_BIT);
+             glBegin(GL_QUADS);
+             glTexCoord2f(0,0); glVertex2f(-1,-1);
+             glTexCoord2f(1,0); glVertex2f(+1,-1);
+             glTexCoord2f(1,1); glVertex2f(+1,+1);
+             glTexCoord2f(0,1); glVertex2f(-1,+1);
+             glEnd();
+          }
 
-      //  Release shader
-      shader[mode].release();
+          //  Release shader
+          shader[mode].release();
+       }
    }
 
    
    //doing two more pass
-   if (mode) 
+   if (firstView&&mode)
    {
 	//  Set projection
 	Projection();
@@ -331,7 +338,11 @@ void Ex11opengl::paintGL()
 	if (fov) glTranslated(0,0,-2*dim);
 	glRotated(ph,1,0,0);
 	glRotated(th,0,1,0);
-	framebuf[0]->bind();
+    framebuf[2]->bind();
+    //Clipping Point
+    glEnable(GL_CLIP_PLANE0);
+    static const GLdouble equation[] = { 0.0, 1.0, 0.0, 0.0 };
+    glClipPlane(GL_CLIP_PLANE0, equation);
 	//  Z-buffer
 	glEnable(GL_DEPTH_TEST);
 	//  Clear screen and depth buffer
@@ -360,8 +371,9 @@ void Ex11opengl::paintGL()
 	//  Disable lighting and depth
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CLIP_PLANE0);
 
-	framebuf[0]->release();
+    framebuf[2]->release();
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -370,12 +382,12 @@ void Ex11opengl::paintGL()
 	shader[mode].bind();
 
 	//  Set shader increments
-	shader[mode].setUniformValue("dX",dX);
-	shader[mode].setUniformValue("dY",dY);
+    shader[mode].setUniformValue("dX",dX*2);
+    shader[mode].setUniformValue("dY",dY*2);
 
 	//try to show the two new buffer
 	//  Get the texture
-	glBindTexture(GL_TEXTURE_2D,framebuf[0]->texture());
+    glBindTexture(GL_TEXTURE_2D,framebuf[2]->texture());
 	//  Exercise shader
 	glBegin(GL_QUADS);
 	glTexCoord2f(0,0); glVertex2f(-1,-1);
@@ -386,7 +398,7 @@ void Ex11opengl::paintGL()
 	shader[mode].release();
    }
    //one more
-   if (mode) 
+   if (secondView&&mode)
    {
 	//  Set projection
 	Projection();
@@ -395,7 +407,11 @@ void Ex11opengl::paintGL()
 	if (fov) glTranslated(0,0,-2*dim);
 	glRotated(-ph,1,0,0);
 	glRotated(th,0,1,0);
-	framebuf[0]->bind();
+    framebuf[3]->bind();
+    //clipping plane
+    glEnable(GL_CLIP_PLANE0);
+    static const GLdouble equation[] = { 0.0, -1.0, 0.0, 0.0 };
+    glClipPlane(GL_CLIP_PLANE0, equation);
 	//  Z-buffer
 	glEnable(GL_DEPTH_TEST);
 	//  Clear screen and depth buffer
@@ -424,8 +440,9 @@ void Ex11opengl::paintGL()
 	//  Disable lighting and depth
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CLIP_PLANE0);
 
-	framebuf[0]->release();
+    framebuf[3]->release();
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -434,12 +451,12 @@ void Ex11opengl::paintGL()
 	shader[mode].bind();
 
 	//  Set shader increments
-	shader[mode].setUniformValue("dX",dX);
-	shader[mode].setUniformValue("dY",dY);
+    shader[mode].setUniformValue("dX",dX);
+    shader[mode].setUniformValue("dY",dY);
 
 	//try to show the two new buffer
 	//  Get the texture
-	glBindTexture(GL_TEXTURE_2D,framebuf[0]->texture());
+    glBindTexture(GL_TEXTURE_2D,framebuf[3]->texture());
 	//  Exercise shader
 	glBegin(GL_QUADS);
 	glTexCoord2f(0,0); glVertex2f(0,-1);
