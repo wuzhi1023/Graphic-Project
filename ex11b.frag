@@ -1,20 +1,11 @@
-// Sharpen
-//   -1 -1 -1
-//   -1  9 -1
-//   -1 -1 -1
-
 uniform float dX;
 uniform float dY;
-uniform sampler2D img;
-
-vec4 sample(float dx,float dy)
-{
-   return texture2D(img,gl_TexCoord[0].st+vec2(dx,dy));
-}
+uniform sampler2D Tex0;    //  Day time texture 0
+uniform sampler2D Tex1;    //  Day time texture 1
 
 void main()
 {
-   gl_FragColor = -sample(-dX,+dY) -     sample(0.0,+dY) - sample(+dX,+dY)
-                  -sample(-dX,0.0) + 9.0*sample(0.0,0.0) - sample(+dX,0.0)
-                  -sample(-dX,-dY) -     sample(0.0,-dY) - sample(+dX,-dY);
+    vec4 color1 = texture2D(Tex0,gl_TexCoord[0].st+vec2(dx,dy));
+    vec4 color2 = texture2D(Tex1,gl_TexCoord[0].st+vec2(dx,dy));
+   gl_FragColor = mix(color1, color2, 0.5);
 }

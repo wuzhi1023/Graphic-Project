@@ -454,11 +454,11 @@ void Ex11opengl::paintGL()
     //  Texture for next month
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D,framebuf[3]->texture());
-	shader[mode].bind();
+	shader[2].bind();
 
 	//  Set shader increments
-    shader[mode].setUniformValue("dX",dX);
-    shader[mode].setUniformValue("dY",dY);
+    shader[2].setUniformValue("dX",dX);
+    shader[2].setUniformValue("dY",dY);
     shader.setUniformValue("Tex0" ,0);
     shader.setUniformValue("Tex1" ,1);
 
@@ -472,7 +472,7 @@ void Ex11opengl::paintGL()
 	glTexCoord2f(1,1); glVertex2f(1,0);
 	glTexCoord2f(0,1); glVertex2f(0,0);
 	glEnd();
-	shader[mode].release();
+	shader[2].release();
    }
 
 
