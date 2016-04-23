@@ -14,7 +14,7 @@
 #define Sin(th) sin(M_PI/180*(th))
 using namespace std;
 
-const int mainView = 0;
+const int mainView = 1;
 const int firstView = 1;
 const int secondView = 1;
 
@@ -255,6 +255,7 @@ void Ex11opengl::paintGL()
    if (mode) framebuf[0]->bind();
 
    if(mainView){
+       glDisable(GL_CLIP_PLANE0);
        //  Z-buffer
        glEnable(GL_DEPTH_TEST);
        //  Clear screen and depth buffer
@@ -283,6 +284,7 @@ void Ex11opengl::paintGL()
        //  Disable lighting and depth
        glDisable(GL_LIGHTING);
        glDisable(GL_DEPTH_TEST);
+       framebuf[0]->release();
 
        //  Apply shader
        if (mode)
@@ -300,27 +302,15 @@ void Ex11opengl::paintGL()
           shader[mode].setUniformValue("dX",dX);
           shader[mode].setUniformValue("dY",dY);
 
-          //  Ping-Pong
-          for (int k=0;k<N;k++)
-          {
-             int last = k%2;
-             int next = 1-last;
-             //  Set output to next framebuffer except for the last pass
-             if (k+1<N)
-                framebuf[next]->bind();
-             else
-                framebuf[last]->release();
-             //  Get the texture
-             glBindTexture(GL_TEXTURE_2D,framebuf[last]->texture());
-             //  Exercise shader
-             glClear(GL_COLOR_BUFFER_BIT);
-             glBegin(GL_QUADS);
-             glTexCoord2f(0,0); glVertex2f(-1,-1);
-             glTexCoord2f(1,0); glVertex2f(+1,-1);
-             glTexCoord2f(1,1); glVertex2f(+1,+1);
-             glTexCoord2f(0,1); glVertex2f(-1,+1);
-             glEnd();
-          }
+          glBindTexture(GL_TEXTURE_2D,framebuf[0]->texture());
+          //  Exercise shader
+          glClear(GL_COLOR_BUFFER_BIT);
+	  glBegin(GL_QUADS);
+	  glTexCoord2f(0,0); glVertex2f(-1,-1);
+	  glTexCoord2f(1,0); glVertex2f(+1,-1);
+	  glTexCoord2f(1,1); glVertex2f(+1,+1);
+	  glTexCoord2f(0,1); glVertex2f(-1,+1);
+	  glEnd();
 
           //  Release shader
           shader[mode].release();
