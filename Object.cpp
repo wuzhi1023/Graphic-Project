@@ -96,6 +96,7 @@ void Object::setColor(Color a,Color d,Color s,Color e,float Ns)
 //
 void Object::texture(QString file)
 {
+   glActiveTexture(GL_TEXTURE0);
    glGenTextures(1,&tex);
    glBindTexture(GL_TEXTURE_2D,tex);
    QImage img(file);
@@ -110,6 +111,7 @@ void Object::texture(QString file)
 //
 void Object::EnableTex()
 {
+   glActiveTexture(GL_TEXTURE0);
    glBindTexture(GL_TEXTURE_2D,tex);
    if (tex) glEnable(GL_TEXTURE_2D);
 }
@@ -119,5 +121,6 @@ void Object::EnableTex()
 //
 void Object::DisableTex()
 {
+   glActiveTexture(GL_TEXTURE0);
    if (tex) glDisable(GL_TEXTURE_2D);
 }

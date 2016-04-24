@@ -1,22 +1,12 @@
-// Blur (low-pass)
-//   1 2 1
-//   2 1 2   / 13
-//   1 2 1
+//  Set the fragment color
 
-uniform float dX;
-uniform float dY;
-uniform sampler2D img;
-
-vec4 sample(float dx,float dy)
-{
-   return texture2D(img,gl_TexCoord[0].st+vec2(dx,dy));
-}
+uniform vec2 dim;
+uniform sampler2D Tex0;    //  Day time texture 0
+uniform sampler2D Tex1;    //  Day time texture 1
 
 void main()
 {
-   float one = 1.0/13.0;
-   float two = 2.0/13.0;
-   gl_FragColor = one*sample(-dX,+dY) + two*sample(0.0,+dY) + one*sample(+dX,+dY)
-                + two*sample(-dX,0.0) + one*sample(0.0,0.0) + two*sample(+dX,0.0)
-                + one*sample(-dX,-dY) + two*sample(0.0,-dY) + one*sample(+dX,-dY);
+    vec4 color1 = texture2D(Tex0,gl_FragCoord.xy/(dim*vec2(2,2)));
+    vec4 color2 = texture2D(Tex1,gl_FragCoord.xy/(dim*vec2(2,2)));
+    gl_FragColor = mix(color1, color2, 0.5);
 }

@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>ex11a.frag</file>
         <file>ex11b.frag</file>
-        <file>ex11c.frag</file>
         <file>ex11d.frag</file>
         <file>ex11e.frag</file>
         <file>ex11f.frag</file>
@@ -16,5 +15,12 @@
         <file>mountainsBW.bmp</file>
         <file>mountain.jpg</file>
         <file>mountain2.jpg</file>
+        <file>back.png</file>
+        <file>bottom.png</file>
+        <file>front.png</file>
+        <file>left.png</file>
+        <file>right.png</file>
+        <file>top.png</file>
+        <file>ex11c.frag</file>
     </qresource>
 </RCC>

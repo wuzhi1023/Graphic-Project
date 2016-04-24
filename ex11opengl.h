@@ -9,6 +9,7 @@
 #include <QString>
 #include <QVector>
 #include "Object.h"
+#include "skybox.h"
 
 class Ex11opengl : public QGLWidget
 {
@@ -33,6 +34,7 @@ private:
    QVector<Object*> objects;          //  Objects
    QTimer           timer;            //  Timer for animations
    QElapsedTimer    time;             //  Track elapsed time
+   Skybox*          sky;
 public:
    Ex11opengl(QWidget* parent=0);                  //  Constructor
    QSize sizeHint() const {return QSize(400,400);} //  Default size of widget
