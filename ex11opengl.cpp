@@ -29,31 +29,6 @@ static void Vertex(double th,double ph)
 }
 
 //
-//  Draw a ball at (x,y,z) radius r
-//
-static void ball(double x,double y,double z,double r)
-{
-   //  Save transformation
-   glPushMatrix();
-   //  Offset, scale and rotate
-   glTranslated(x,y,z);
-   glScaled(r,r,r);
-   //  Bands of latitude
-   for (int ph=-90;ph<90;ph+=10)
-   {
-      glBegin(GL_QUAD_STRIP);
-      for (int th=0;th<=360;th+=20)
-      {
-         Vertex(th,ph);
-         Vertex(th,ph+10);
-      }
-      glEnd();
-   }
-   //  Undo transofrmations
-   glPopMatrix();
-}
-
-//
 //  Constructor
 //
 Ex11opengl::Ex11opengl(QWidget* parent)
@@ -168,45 +143,34 @@ void Ex11opengl::initializeGL()
    sky->scale(12,12,12);
    objects.push_back(sky);
 
-   // Cube
-   Cube* cube = new Cube();
-   cube->scale(0.5,0.5,0.5);
-   cube->translate(1,1,0);
-   objects.push_back(cube);
-
 
    Mountain* moun = new Mountain();
    moun->texture(":/mountain.jpg");
    moun->translate(-5,-2,-5);
    objects.push_back(moun);
 
-   // Teapot
-   Teapot* pot = new Teapot(8);
-   pot->scale(0.3);
-   pot->texture(":/water.png");
-   pot->translate(-1,1,0);
-   objects.push_back(pot);
 
    // Cruiser
-   WaveOBJ* cruiser=0;
+   WaveOBJ* tree1=0;
    try
    {
-      cruiser = new WaveOBJ("cruiser.obj",":/");
+      tree1 = new WaveOBJ("EA02y.obj",":/");
    }
    catch (QString err)
    {
       Fatal("Error loading object\n"+err);
    }
-   if (cruiser)
+   if (tree1)
    {
-      cruiser->color(1,1,0);
-      cruiser->scale(1.0);
-      cruiser->translate(0,-1,0);
-      objects.push_back(cruiser);
+      tree1->color(1,1,1);
+      tree1->translate(0,-3,-2);
+      tree1->rotate(-90,1,0,0);
+      tree1->scale(0.07);
+      objects.push_back(tree1);
    }
    //  Start 100 fps timer connected to updateGL
    move = false;
-   timer.setInterval(10);
+   timer.setInterval(17);
    connect(&timer,SIGNAL(timeout()),this,SLOT(updateGL()));
    timer.start();
    time.start();
@@ -240,6 +204,8 @@ void Ex11opengl::paintGL()
    //  Wall time (seconds)
    float t = 0.001*time.elapsed();
    if (move) zh = fmod(90*t,360);
+   float skyZh = fmod(t,360);
+   sky->rotate(skyZh,0,1,0);
 
    //  Set projection
    Projection();
@@ -297,6 +263,7 @@ void Ex11opengl::paintGL()
        shader[3].setUniformValue("Tex0" ,0);
        shader[3].setUniformValue("Tex1" ,1);
        QVector2D dim(width(),height());
+       shader[3].setUniformValue("reflection",(float)(0.25+(float)abs(ph-90)/180.0));
        shader[3].setUniformValue("dim",dim);
        glTranslatef(0.7,0,1.3);
        glBegin(GL_QUADS);

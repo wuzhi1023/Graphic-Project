@@ -218,7 +218,10 @@ void WaveOBJ::display()
    glPushMatrix();
    setTransform(sr,sr,sr);
    setColor();
+   glEnable (GL_BLEND);
+   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    glCallList(list);
+   glDisable (GL_BLEND);
    glPopMatrix();
 }
 

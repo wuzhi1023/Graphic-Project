@@ -11,10 +11,8 @@
         <file>cruiser.mtl</file>
         <file>cruiser.png</file>
         <file>water.png</file>
-        <file>mountains.bmp</file>
         <file>mountainsBW.bmp</file>
         <file>mountain.jpg</file>
-        <file>mountain2.jpg</file>
         <file>back.png</file>
         <file>bottom.png</file>
         <file>front.png</file>
@@ -22,5 +20,12 @@
         <file>right.png</file>
         <file>top.png</file>
         <file>ex11c.frag</file>
+        <file>EA02brk_b.tif</file>
+        <file>EA02brk.tif</file>
+        <file>EA02lef_a.tif</file>
+        <file>EA02lef.tif</file>
+        <file>EA02y.mtl</file>
+        <file>EA02y.obj</file>
+        <file>EA02y.xfr</file>
     </qresource>
 </RCC>
