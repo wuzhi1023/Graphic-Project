@@ -10,6 +10,7 @@
 #include <QVector>
 #include "Object.h"
 #include "skybox.h"
+#include "WaveOBJ.h"
 
 class Ex11opengl : public QGLWidget
 {
@@ -35,6 +36,7 @@ private:
    QTimer           timer;            //  Timer for animations
    QElapsedTimer    time;             //  Track elapsed time
    Skybox*          sky;
+   WaveOBJ* tree1;
    unsigned int waterDUDV, waterNormal;
 public:
    Ex11opengl(QWidget* parent=0);                  //  Constructor

@@ -127,7 +127,7 @@ void Ex11opengl::initializeGL()
    Shader(shader[1],"",":/ex11a.frag");
    Shader(shader[2],"",":/ex11b.frag");
    Shader(shader[3],":/ex11c.vert",":/ex11c.frag");
-   Shader(shader[4],"",":/ex11d.frag");
+   Shader(shader[4],":/ex11d.vert","");
    Shader(shader[5],"",":/ex11e.frag");
    Shader(shader[6],"",":/ex11f.frag");
    Shader(shader[7],"",":/ex11g.frag");
@@ -164,7 +164,7 @@ void Ex11opengl::initializeGL()
 
 
    // Cruiser
-   WaveOBJ* tree1=0;
+   tree1=0;
    try
    {
       tree1 = new WaveOBJ("EA02y.obj",":/");
@@ -179,7 +179,7 @@ void Ex11opengl::initializeGL()
       tree1->translate(0,-3,-2);
       tree1->rotate(-90,1,0,0);
       tree1->scale(0.07);
-      objects.push_back(tree1);
+//      objects.push_back(tree1);
    }
    //  Start 100 fps timer connected to updateGL
    move = false;
@@ -266,13 +266,10 @@ void Ex11opengl::paintGL()
        for (int k=0;k<objects.size();k++)
           objects[k]->display();
 
-       GLfloat mdl[16];
-       float camera_org[3];
-       glGetFloatv(GL_MODELVIEW_MATRIX, mdl);
-       camera_org[0] = -(mdl[0] * mdl[12] + mdl[1] * mdl[13] + mdl[2] * mdl[14]);
-       camera_org[1] = -(mdl[4] * mdl[12] + mdl[5] * mdl[13] + mdl[6] * mdl[14]);
-       camera_org[2] = -(mdl[8] * mdl[12] + mdl[9] * mdl[13] + mdl[10] * mdl[14]);
-       QVector3D camera(camera_org[0], camera_org[1], camera_org[2]);
+       shader[4].bind();
+       tree1->display();
+       shader[4].release();
+
 
        shader[3].bind();
        //  Texture
@@ -291,16 +288,15 @@ void Ex11opengl::paintGL()
        shader[3].setUniformValue("waterDUDV" ,2);
        shader[3].setUniformValue("waterNormal" ,3);
        shader[3].setUniformValue("movement" ,movement);
-       shader[3].setUniformValue("cameraPos",camera);
        QVector2D dim(width(),height());
        shader[3].setUniformValue("reflection",(float)(0.1+(float)abs(ph-90)/140.0));
        shader[3].setUniformValue("dim",dim);
        glTranslatef(0.7,0,1.3);
        glBegin(GL_QUADS);
        glTexCoord2f(0,0);glVertex3f(-3,wLevel,-3);
-       glTexCoord2f(1.4,0);glVertex3f(3,wLevel,-3);
-       glTexCoord2f(1.4,1.4);glVertex3f(3,wLevel,3);
-       glTexCoord2f(0,1.4);glVertex3f(-3,wLevel,3);
+       glTexCoord2f(2,0);glVertex3f(3,wLevel,-3);
+       glTexCoord2f(2,2);glVertex3f(3,wLevel,3);
+       glTexCoord2f(0,2);glVertex3f(-3,wLevel,3);
        glEnd();
        shader[3].release();
 

@@ -30,5 +30,6 @@
         <file>normal.png</file>
         <file>waterDUDV.png</file>
         <file>ex11c.vert</file>
+        <file>ex11d.vert</file>
     </qresource>
 </RCC>

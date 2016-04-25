@@ -38,5 +38,4 @@ void main()
     vec3 specularHighlights = vec3(1,1,1) * Is * reflectivity;
 
     gl_FragColor = mix(Color, vec4(0,0.3,0.5,1), 0.2) + vec4(specularHighlights, 0.0);
-
 }
