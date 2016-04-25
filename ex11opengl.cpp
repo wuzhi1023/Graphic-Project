@@ -181,6 +181,7 @@ void Ex11opengl::initializeGL()
       tree1->scale(0.07);
 //      objects.push_back(tree1);
    }
+
    //  Start 100 fps timer connected to updateGL
    move = false;
    timer.setInterval(17);
@@ -306,7 +307,6 @@ void Ex11opengl::paintGL()
        //  Disable lighting and depth
        glDisable(GL_LIGHTING);
        glDisable(GL_DEPTH_TEST);
-
    }
 
    
