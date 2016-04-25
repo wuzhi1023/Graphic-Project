@@ -19,14 +19,8 @@ const int mainView = 1;
 const int firstView = 1;
 const int secondView = 1;
 const float wLevel = -2.6;
-
-//
-//  Draw vertex in polar coordinates
-//
-static void Vertex(double th,double ph)
-{
-   glVertex3d(Sin(th)*Cos(ph),Cos(th)*Cos(ph),Sin(ph));
-}
+const float moveSpeed = 0.03;
+float movement;
 
 //
 //  Constructor
@@ -132,15 +126,34 @@ void Ex11opengl::initializeGL()
    //  Load shaders
    Shader(shader[1],"",":/ex11a.frag");
    Shader(shader[2],"",":/ex11b.frag");
-   Shader(shader[3],"",":/ex11c.frag");
+   Shader(shader[3],":/ex11c.vert",":/ex11c.frag");
    Shader(shader[4],"",":/ex11d.frag");
    Shader(shader[5],"",":/ex11e.frag");
    Shader(shader[6],"",":/ex11f.frag");
    Shader(shader[7],"",":/ex11g.frag");
    Shader(shader[8],"",":/ex11h.frag");
 
+   glActiveTexture(GL_TEXTURE2);
+   glGenTextures(1,&waterDUDV);
+   glBindTexture(GL_TEXTURE_2D,waterDUDV);
+   QImage waterDD(":/waterDUDV.png");
+   QImage rgba = QGLWidget::convertToGLFormat(waterDD);
+   glTexImage2D(GL_TEXTURE_2D,0,4,rgba.width(),rgba.height(),0,GL_RGBA,GL_UNSIGNED_BYTE,rgba.bits());
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+
+   glActiveTexture(GL_TEXTURE3);
+   glGenTextures(1,&waterNormal);
+   glBindTexture(GL_TEXTURE_2D,waterNormal);
+   QImage waterNM(":/normal.png");
+   QImage NMrgba = QGLWidget::convertToGLFormat(waterNM);
+   glTexImage2D(GL_TEXTURE_2D,0,4,NMrgba.width(),NMrgba.height(),0,GL_RGBA,GL_UNSIGNED_BYTE,NMrgba.bits());
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+
+
    sky = new Skybox();
-   sky->scale(12,12,12);
+   sky->scale(40,40,40);
    objects.push_back(sky);
 
 
@@ -204,7 +217,8 @@ void Ex11opengl::paintGL()
    //  Wall time (seconds)
    float t = 0.001*time.elapsed();
    if (move) zh = fmod(90*t,360);
-   float skyZh = fmod(t,360);
+   float skyZh = fmod(t*0.3,360);
+   float movement = fmod(t*moveSpeed,1);
    sky->rotate(skyZh,0,1,0);
 
    //  Set projection
@@ -248,29 +262,45 @@ void Ex11opengl::paintGL()
        //  Draw scene
 
        glPushMatrix();
-
+       glScaled(2,1,2);
        for (int k=0;k<objects.size();k++)
           objects[k]->display();
 
+       GLfloat mdl[16];
+       float camera_org[3];
+       glGetFloatv(GL_MODELVIEW_MATRIX, mdl);
+       camera_org[0] = -(mdl[0] * mdl[12] + mdl[1] * mdl[13] + mdl[2] * mdl[14]);
+       camera_org[1] = -(mdl[4] * mdl[12] + mdl[5] * mdl[13] + mdl[6] * mdl[14]);
+       camera_org[2] = -(mdl[8] * mdl[12] + mdl[9] * mdl[13] + mdl[10] * mdl[14]);
+       QVector3D camera(camera_org[0], camera_org[1], camera_org[2]);
+
        shader[3].bind();
-       //  Texture for this month
+       //  Texture
+       glEnable(GL_TEXTURE_2D);
        glActiveTexture(GL_TEXTURE0);
        glBindTexture(GL_TEXTURE_2D,framebuf[2]->texture());
-       //  Texture for next month
        glActiveTexture(GL_TEXTURE1);
        glBindTexture(GL_TEXTURE_2D,framebuf[3]->texture());
+       glActiveTexture(GL_TEXTURE2);
+       glBindTexture(GL_TEXTURE_2D,waterDUDV);
+       glActiveTexture(GL_TEXTURE3);
+       glBindTexture(GL_TEXTURE_2D,waterNormal);
        //  Set shader increments
        shader[3].setUniformValue("Tex0" ,0);
        shader[3].setUniformValue("Tex1" ,1);
+       shader[3].setUniformValue("waterDUDV" ,2);
+       shader[3].setUniformValue("waterNormal" ,3);
+       shader[3].setUniformValue("movement" ,movement);
+       shader[3].setUniformValue("cameraPos",camera);
        QVector2D dim(width(),height());
-       shader[3].setUniformValue("reflection",(float)(0.25+(float)abs(ph-90)/180.0));
+       shader[3].setUniformValue("reflection",(float)(0.1+(float)abs(ph-90)/140.0));
        shader[3].setUniformValue("dim",dim);
        glTranslatef(0.7,0,1.3);
        glBegin(GL_QUADS);
-       glVertex3f(-3,wLevel,-3);
-       glVertex3f(3,wLevel,-3);
-       glVertex3f(3,wLevel,3);
-       glVertex3f(-3,wLevel,3);
+       glTexCoord2f(0,0);glVertex3f(-3,wLevel,-3);
+       glTexCoord2f(1.4,0);glVertex3f(3,wLevel,-3);
+       glTexCoord2f(1.4,1.4);glVertex3f(3,wLevel,3);
+       glTexCoord2f(0,1.4);glVertex3f(-3,wLevel,3);
        glEnd();
        shader[3].release();
 
@@ -289,7 +319,7 @@ void Ex11opengl::paintGL()
    {
 	//  Set projection
 	Projection();
-	//  Set view
+    //  Set view
 	glLoadIdentity();
 	if (fov) glTranslated(0,0,-2*dim);
 	glRotated(ph,1,0,0);
@@ -297,7 +327,7 @@ void Ex11opengl::paintGL()
     framebuf[2]->bind();
     //Clipping Point
     glEnable(GL_CLIP_PLANE0);
-    static const GLdouble equation[] = { 0.0, -1.0, 0.0, wLevel };
+    static const GLdouble equation[] = { 0.0, -1.0, 0.0, wLevel + 0.04 };
     glClipPlane(GL_CLIP_PLANE0, equation);
 	//  Z-buffer
 	glEnable(GL_DEPTH_TEST);
@@ -320,6 +350,7 @@ void Ex11opengl::paintGL()
 
 	//  Draw scene
 	glPushMatrix();
+    glScaled(2,1,2);
 	for (int k=0;k<objects.size();k++)
 	objects[k]->display();
 	glPopMatrix();
@@ -335,24 +366,24 @@ void Ex11opengl::paintGL()
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	shader[mode].bind();
+//	shader[1].bind();
 
-	//  Set shader increments
-    shader[mode].setUniformValue("dX",dX);
-    shader[mode].setUniformValue("dY",dY);
+//	//  Set shader increments
+//    shader[1].setUniformValue("dX",dX);
+//    shader[1].setUniformValue("dY",dY);
 
-	//try to show the two new buffer
-	//  Get the texture
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D,framebuf[2]->texture());
-	//  Exercise shader
-	glBegin(GL_QUADS);
-	glTexCoord2f(0,0); glVertex2f(-1,-1);
-    glTexCoord2f(1,0); glVertex2f(-0.5,-1);
-    glTexCoord2f(1,1); glVertex2f(-0.5,-0.5);
-    glTexCoord2f(0,1); glVertex2f(-1,-0.5);
-	glEnd();
-	shader[mode].release();
+//	//try to show the two new buffer
+//	//  Get the texture
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_2D,framebuf[2]->texture());
+//	//  Exercise shader
+//	glBegin(GL_QUADS);
+//	glTexCoord2f(0,0); glVertex2f(-1,-1);
+//    glTexCoord2f(1,0); glVertex2f(-0.5,-1);
+//    glTexCoord2f(1,1); glVertex2f(-0.5,-0.5);
+//    glTexCoord2f(0,1); glVertex2f(-1,-0.5);
+//	glEnd();
+//	shader[1].release();
    }
    //one more
    if (secondView&&mode)
@@ -367,7 +398,7 @@ void Ex11opengl::paintGL()
     framebuf[3]->bind();
     //clipping plane
     glEnable(GL_CLIP_PLANE0);
-    static const GLdouble equation[] = { 0.0, 1.0, 0.0, -wLevel };
+    static const GLdouble equation[] = { 0.0, 1.0, 0.0, -wLevel + 0.04};
     glTranslated(0,2*wLevel,0);
     glScaled(1,-1,1);
     glClipPlane(GL_CLIP_PLANE0, equation);
@@ -392,6 +423,7 @@ void Ex11opengl::paintGL()
 
 	//  Draw scene
 	glPushMatrix();
+    glScaled(2,1,2);
 	for (int k=0;k<objects.size();k++)
 	objects[k]->display();
 	glPopMatrix();
@@ -407,48 +439,48 @@ void Ex11opengl::paintGL()
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-    shader[mode].bind();
+//    shader[1].bind();
 
-    //  Set shader increments
-    shader[mode].setUniformValue("dX",dX);
-    shader[mode].setUniformValue("dY",dY);
+//    //  Set shader increments
+//    shader[1].setUniformValue("dX",dX);
+//    shader[1].setUniformValue("dY",dY);
 
-    //try to show the two new buffer
-    //  Get the texture
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D,framebuf[3]->texture());
-    //  Exercise shader
-    glBegin(GL_QUADS);
-    glTexCoord2f(0,0); glVertex2f(-0.5,-1);
-    glTexCoord2f(1,0); glVertex2f(0,-1);
-    glTexCoord2f(1,1); glVertex2f(0,-0.5);
-    glTexCoord2f(0,1); glVertex2f(-0.5,-0.5);
-    glEnd();
-    shader[mode].release();
-    shader[2].bind();
-    //  Texture for this month
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D,framebuf[2]->texture());
-    //  Texture for next month
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D,framebuf[3]->texture());
-	//  Set shader increments
-    shader[2].setUniformValue("dX",dX);
-    shader[2].setUniformValue("dY",dY);
-    shader[2].setUniformValue("Tex0" ,0);
-    shader[2].setUniformValue("Tex1" ,1);
-
-	//try to show the two new buffer
-//	//  Get the texture
+//    //try to show the two new buffer
+//    //  Get the texture
+//    glActiveTexture(GL_TEXTURE0);
 //    glBindTexture(GL_TEXTURE_2D,framebuf[3]->texture());
-	//  Exercise shader
-	glBegin(GL_QUADS);
-    glTexCoord2f(0,0); glVertex2f(0.5,-1);
-	glTexCoord2f(1,0); glVertex2f(1,-1);
-    glTexCoord2f(1,1); glVertex2f(1,-0.5);
-    glTexCoord2f(0,1); glVertex2f(0.5,-0.5);
-	glEnd();
-    shader[2].release();
+//    //  Exercise shader
+//    glBegin(GL_QUADS);
+//    glTexCoord2f(0,0); glVertex2f(-0.5,-1);
+//    glTexCoord2f(1,0); glVertex2f(0,-1);
+//    glTexCoord2f(1,1); glVertex2f(0,-0.5);
+//    glTexCoord2f(0,1); glVertex2f(-0.5,-0.5);
+//    glEnd();
+//    shader[1].release();
+//    shader[2].bind();
+//    //  Texture for this month
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_2D,framebuf[2]->texture());
+//    //  Texture for next month
+//    glActiveTexture(GL_TEXTURE1);
+//    glBindTexture(GL_TEXTURE_2D,framebuf[3]->texture());
+//    //  Set shader increments
+//    shader[2].setUniformValue("dX",dX);
+//    shader[2].setUniformValue("dY",dY);
+//    shader[2].setUniformValue("Tex0" ,0);
+//    shader[2].setUniformValue("Tex1" ,1);
+
+//    //try to show the two new buffer
+////	//  Get the texture
+////    glBindTexture(GL_TEXTURE_2D,framebuf[3]->texture());
+//    //  Exercise shader
+//    glBegin(GL_QUADS);
+//    glTexCoord2f(0,0); glVertex2f(0.5,-1);
+//    glTexCoord2f(1,0); glVertex2f(1,-1);
+//    glTexCoord2f(1,1); glVertex2f(1,-0.5);
+//    glTexCoord2f(0,1); glVertex2f(0.5,-0.5);
+//    glEnd();
+//    shader[2].release();
    }
 
 
@@ -482,8 +514,8 @@ void Ex11opengl::Projection()
    glLoadIdentity();
    if (fov)
    {
-      float zmin = dim;
-      float zmax = 12*dim;
+      float zmin = 0.1;
+      float zmax = 1000;
       float ydim = zmin*tan(fov*M_PI/360);
       float xdim = ydim*asp;
       glFrustum(-xdim,+xdim,-ydim,+ydim,zmin,zmax);

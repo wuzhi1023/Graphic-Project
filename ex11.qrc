@@ -27,5 +27,8 @@
         <file>EA02y.mtl</file>
         <file>EA02y.obj</file>
         <file>EA02y.xfr</file>
+        <file>normal.png</file>
+        <file>waterDUDV.png</file>
+        <file>ex11c.vert</file>
     </qresource>
 </RCC>
