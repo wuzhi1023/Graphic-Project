@@ -8,7 +8,6 @@ uniform sampler2D waterDUDV;
 uniform sampler2D waterNormal;
 uniform float reflection;
 
-varying vec3 toCameraVector;
 varying vec3 View;
 varying vec3 Light;
 

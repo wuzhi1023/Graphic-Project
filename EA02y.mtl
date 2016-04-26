@@ -19,7 +19,7 @@ Kd 1 1 1
 Ks 0 0 0
 illum 2
 Ns 2048
-map_Kd EA02lef.tif
+map_Kd EA02lefr.tif
 
 newmtl Barkb
 Ka 0.392157 0.392157 0.392157
