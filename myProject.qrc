@@ -16,10 +16,10 @@
         <file>right.png</file>
         <file>top.png</file>
         <file>ex11c.frag</file>
-        <file>EA02brk_b.tif</file>
-        <file>EA02brk.tif</file>
-        <file>EA02lef_a.tif</file>
-        <file>EA02lef.tif</file>
+        <file>EA02brk_b.png</file>
+        <file>EA02brk.png</file>
+        <file>EA02lef_a.png</file>
+        <file>EA02lef.png</file>
         <file>EA02y.mtl</file>
         <file>EA02y.obj</file>
         <file>EA02y.xfr</file>
@@ -30,27 +30,25 @@
         <file>FR01a.mtl</file>
         <file>FR01a.obj</file>
         <file>FR01a.xfr</file>
-        <file>FR01brk1_b.tif</file>
-        <file>FR01brk1.tif</file>
-        <file>FR01brk2_b.tif</file>
-        <file>FR01brk2.tif</file>
-        <file>FR01brk3_b.tif</file>
-        <file>FR01brk3.tif</file>
-        <file>FR01flo_a.tif</file>
-        <file>FR01flo.tif</file>
-        <file>FR01flo2.tif</file>
-        <file>FR01frt_b.tif</file>
-        <file>FR01frt.tif</file>
-        <file>FR01frt2_b.tif</file>
-        <file>FR01frt2.tif</file>
-        <file>FR01lef_a.tif</file>
-        <file>FR01lef.tif</file>
+        <file>FR01brk1_b.png</file>
+        <file>FR01brk1.png</file>
+        <file>FR01brk2_b.png</file>
+        <file>FR01brk2.png</file>
+        <file>FR01brk3_b.png</file>
+        <file>FR01brk3.png</file>
+        <file>FR01flo_a.png</file>
+        <file>FR01flo.png</file>
+        <file>FR01flo2.png</file>
+        <file>FR01frt_b.png</file>
+        <file>FR01frt.png</file>
+        <file>FR01frt2_b.png</file>
+        <file>FR01frt2.png</file>
+        <file>FR01lef_a.png</file>
+        <file>FR01lef.png</file>
         <file>EA02a.mtl</file>
         <file>EA02a.obj</file>
         <file>EA02a.xfr</file>
-        <file>EA02lefr_a.tif</file>
-        <file>EA02lefr.tif</file>
-        <file>EA02lef_a.png</file>
-        <file>EA02lef.png</file>
+        <file>EA02lefr_a.png</file>
+        <file>EA02lefr.png</file>
     </qresource>
 </RCC>

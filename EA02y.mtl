@@ -11,7 +11,7 @@ Kd 1 1 1
 Ks 0 0 0
 illum 2
 Ns 2048
-map_Kd EA02brk.tif
+map_Kd EA02brk.png
 
 newmtl Leaf
 Ka 0.4 0.4 0.4
@@ -19,7 +19,7 @@ Kd 1 1 1
 Ks 0 0 0
 illum 2
 Ns 2048
-map_Kd EA02lefr.tif
+map_Kd EA02lefr.png
 
 newmtl Barkb
 Ka 0.392157 0.392157 0.392157
@@ -27,4 +27,4 @@ Kd 1 1 1
 Ks 0 0 0
 illum 2
 Ns 2048
-map_Kd EA02brk.tif
+map_Kd EA02brk.png
