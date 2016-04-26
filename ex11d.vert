@@ -1,8 +1,6 @@
 uniform float movement;
-varying vec3 vertex;
 void main()
 {
-   vertex = gl_Vertex;
    vec4 vert = gl_Vertex;
 //   float move = length(texture2D(noiseMap, vec2(gl_Vertex.x+movement, gl_Vertex.y)));
    float move = length(gl_Vertex.xy);
