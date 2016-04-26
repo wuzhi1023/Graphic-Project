@@ -286,7 +286,7 @@ void Ex11opengl::paintGL()
    if (move) zh = fmod(90*t,360);
    float skyZh = fmod(t*0.3,360);
    float movement = fmod(t*moveSpeed,1);
-   float moveCycle = fmod(t, 6.2831852);
+   float moveCycle = fmod(t*2, 6.2831852);
    sky->rotate(skyZh,0,1,0);
 
    //  Set projection
