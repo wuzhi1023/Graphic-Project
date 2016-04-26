@@ -518,6 +518,7 @@ void Ex11opengl::paintGL()
 	objects[k]->display();
 
     shader[4].bind();
+    shader[4].setUniformValue("movement" ,moveCycle);
     for (int k=0;k<trees.size();k++)
        trees[k]->display();
     shader[4].release();
