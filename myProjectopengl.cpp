@@ -122,7 +122,7 @@ void Ex11opengl::initializeGL()
    Shader(shader[1],"",":/ex11a.frag");
    Shader(shader[2],"",":/ex11b.frag");
    Shader(shader[3],":/ex11c.vert",":/ex11c.frag");
-   Shader(shader[4],":/ex11d.vert","");
+   Shader(shader[4],":/ex11d.vert",":/ex11d.frag");
    Shader(shader[5],":/ex11c.vert",":/ex11e.frag");
    Shader(shader[6],"",":/ex11f.frag");
    Shader(shader[7],"",":/ex11g.frag");
@@ -333,11 +333,11 @@ void Ex11opengl::paintGL()
        for (int k=0;k<objects.size();k++)
           objects[k]->display();
 
-       shader[4].bind();
-       shader[4].setUniformValue("movement" ,moveCycle);
+//       shader[4].bind();
+//       shader[4].setUniformValue("movement" ,moveCycle);
        for (int k=0;k<trees.size();k++)
           trees[k]->display();
-       shader[4].release();
+//       shader[4].release();
 
     if(mode==2){
         glTranslatef(0.7,0,1.3);

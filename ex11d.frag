@@ -1,4 +1,4 @@
-uniform sampler2D noiseMap;
+uniform float movement;
 void main()
 {
    gl_FragColor = gl_Color;
