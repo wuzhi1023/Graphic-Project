@@ -32,6 +32,9 @@ Ex11viewer::Ex11viewer()
    //  View angle and zoom
    QLabel* angles = new QLabel();
 
+   QSpinBox* passes = new QSpinBox();
+   passes->setRange(1,10);
+
 //   //  Pause/resume button
 //   light = new QPushButton("Pause");
 
@@ -45,8 +48,10 @@ Ex11viewer::Ex11viewer()
    layout->addWidget(ogl,0,0,9,1);
    layout->addWidget(new QLabel("Steps"),0,1);
    layout->addWidget(shader,0,2);
-   layout->addWidget(new QLabel("Angles"),1,1);
-   layout->addWidget(angles,1,2);
+   layout->addWidget(new QLabel("Tree Movement"),1,1);
+      layout->addWidget(passes,1,2);
+   layout->addWidget(new QLabel("Angles"),2,1);
+   layout->addWidget(angles,2,2);
    layout->addWidget(rst,8,1);
    layout->addWidget(quit,8,2);
    //  Manage resizing
@@ -56,6 +61,7 @@ Ex11viewer::Ex11viewer()
    setLayout(layout);
 
    connect(shader,SIGNAL(currentIndexChanged(int))    , ogl,SLOT(setShader(int)));
+   connect(passes,SIGNAL(valueChanged(int))           , ogl,SLOT(setPasses(int)));
    connect(ogl,SIGNAL(angles(QString)) , angles,SLOT(setText(QString)));
    connect(rst  ,SIGNAL(pressed()),ogl,SLOT(reset()));
    connect(quit,SIGNAL(pressed()) , qApp,SLOT(quit()));

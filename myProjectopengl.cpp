@@ -335,6 +335,7 @@ void Ex11opengl::paintGL()
 
        shader[4].bind();
        shader[4].setUniformValue("movement" ,moveCycle);
+       shader[4].setUniformValue("moveRange" ,(float)N);
        for (int k=0;k<trees.size();k++)
           trees[k]->display();
        shader[4].release();
@@ -519,6 +520,7 @@ void Ex11opengl::paintGL()
 
     shader[4].bind();
     shader[4].setUniformValue("movement" ,moveCycle);
+    shader[4].setUniformValue("moveRange" ,(float)N);
     for (int k=0;k<trees.size();k++)
        trees[k]->display();
     shader[4].release();
