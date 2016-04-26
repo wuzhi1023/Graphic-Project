@@ -43,7 +43,7 @@ Ex11viewer::Ex11viewer()
    //  Set layout of child widgets
    QGridLayout* layout = new QGridLayout;
    layout->addWidget(ogl,0,0,9,1);
-   layout->addWidget(new QLabel("Shader"),0,1);
+   layout->addWidget(new QLabel("Steps"),0,1);
    layout->addWidget(shader,0,2);
    layout->addWidget(new QLabel("Angles"),1,1);
    layout->addWidget(angles,1,2);

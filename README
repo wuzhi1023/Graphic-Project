@@ -1,0 +1,11 @@
+Final Project
+
+Zhihao Wu
+CSCI5239
+
+To make:
+$ qmake
+$ make
+
+Executable name: myProject
+The dropdown menu shows main steps of the project.
