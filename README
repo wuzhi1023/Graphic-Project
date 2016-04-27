@@ -3,9 +3,8 @@ Final Project
 Zhihao Wu
 CSCI5239
 
-To make:
 $ qmake
 $ make
+$ ./myProject
 
-Executable name: myProject
-The dropdown menu shows main steps of the project.
+The dropdown menu shows main steps of the project. Use the water surface as a clipping plain, the wholescene is rendered 3 times, the first time is everything below the surface, in a frame buffer object as the refraction texture, the second time is everything above the surface, in a frame buffer object as the reflection texture, the third time is on the screen. Use the two textures above to draw the water. And then use a DUDV map and a corresponding normal map to add wave effect and reflecting sun light. Trees are wavefront objects, vertex shaders are used to make them move according to the wind.
