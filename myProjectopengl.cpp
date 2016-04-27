@@ -124,9 +124,6 @@ void Ex11opengl::initializeGL()
    Shader(shader[3],":/ex11c.vert",":/ex11c.frag");
    Shader(shader[4],":/ex11d.vert","");
    Shader(shader[5],":/ex11c.vert",":/ex11e.frag");
-   Shader(shader[6],"",":/ex11f.frag");
-   Shader(shader[7],"",":/ex11g.frag");
-   Shader(shader[8],"",":/ex11h.frag");
 
    glGenTextures(1,&waterDUDV);
    glBindTexture(GL_TEXTURE_2D,waterDUDV);

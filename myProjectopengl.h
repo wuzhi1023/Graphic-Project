@@ -31,7 +31,7 @@ private:
    double  dim;       //  Display size
    double  asp;       //  Sceen aspect ratio
    QGLFramebufferObject* framebuf[4]; //  Framebuffers
-   QGLShaderProgram shader[9];        //  Shaders
+   QGLShaderProgram shader[6];        //  Shaders
    QVector<Object*> objects;          //  Objects
    QVector<Object*> trees;
    QTimer           timer;            //  Timer for animations
